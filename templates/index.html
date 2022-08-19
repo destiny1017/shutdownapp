@@ -2,8 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>야생방 서버 실행기</title>
 </head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<meta property="og:url" content="http://122.39.31.98:5000/" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="야생방 서버 실행기" />
+<meta property="og:description" content="서버 실행기" />
+<meta property="og:image" content="https://postfiles.pstatic.net/MjAyMjA4MjBfMTEy/MDAxNjYwOTI2NDE1NzM1._si3TeQI8ezFeoRJnMxB-auHHTQxWmGZDUTPKFlcmLYg.RiszXfMcl36LMmNUxHkXdxsiY8b0c-M2u7keMqmdaxsg.PNG.eogh6428/%EC%9D%B4%EB%AF%B8%EC%A7%80_349.png?type=w773"/>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,29 +18,26 @@
 <style>
 
 /* 모바일 환경에서만 적용할 css */
-@media screen and (max-width: 1024px) {
-    h1 {
-        font-size: 50px;
+@media screen and (min-width: 700px) {
+    .mainDiv {
+        width: 700px;
     }
+}
 
-    .running-text {
-        font-size: 22px !important;
-    }
-
-    button#start {
-        font-size: 35px !important;
-    }
-
-    button#batch {
-        font-size: 35px !important;
-    }
+html {
+    height: 100%;
 }
 
 body {
     font-family: 'Gothic A1', sans-serif;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
 }
 button#batch {
-    width: 300px;
+    width: 50%;
     height: 200px;
     border: 1px solid #ff2929;
     background: linear-gradient(to bottom, #ff7575, #fff4f4, #ff7575);
@@ -47,7 +51,7 @@ button#batch:active {
 }
 
 button#start {
-    width: 300px;
+    width: 50%;
     height: 200px;
     border: 1px solid #1451ff;
     background: linear-gradient(to bottom, lightblue, #f5f8ff, lightblue);
@@ -67,17 +71,22 @@ button#start:active {
     justify-content: center;
     align-items: center;
     height: 500px;
+    max-width: 700px;
     margin-top: 10%;
 }
 
 .startMsg, .exitMsg {
-    margin-top: 10px;
+    margin-top: 20px;
     color: #ff4242;
     visibility: hidden;
+    font-size: 15px;
+    padding: 0px 10px 0px 10px;
 }
 
 .btnDiv {
   display: flex;
+  width: 90%;
+  padding: 0 10px 0 10px;
 }
 
 h1 {
@@ -114,8 +123,10 @@ h1 {
 </body>
 <script>
 
+    let status;
+
     $("#batch").click( () => {
-        $("#startMsg").css("visibility", "hidden");
+        $(".startMsg").css("visibility", "hidden");
         $("button").css("pointer-events", "none");
         // ajax 통신
         $.ajax({
@@ -134,22 +145,27 @@ h1 {
     });
 
     $("#start").click( () => {
-        $("#exitMsg").css("visibility", "hidden");
-        $("button").css("pointer-events", "none");
-        // ajax 통신
-        $.ajax({
-            type : "GET",            // HTTP method type(GET, POST) 형식이다.
-            url : "/startapp",      // 컨트롤러에서 대기중인 URL 주소이다.
-            success : function(res){ // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
-                // 응답코드 > 0000
-                $(".startMsg").css("visibility", "unset");
-                $("button").css("pointer-events", "all");
-            },
-            error : function(XMLHttpRequest, textStatus, errorThrown){ // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
-                alert("통신 실패.");
-                $("button").css("pointer-events", "all");
-            }
-        });
+        if(status == 0) {
+            $(".exitMsg").css("visibility", "hidden");
+            $("button").css("pointer-events", "none");
+            // ajax 통신
+            $.ajax({
+                type : "GET",            // HTTP method type(GET, POST) 형식이다.
+                url : "/startapp",      // 컨트롤러에서 대기중인 URL 주소이다.
+                success : function(res){ // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
+                    // 응답코드 > 0000
+                    $(".startMsg").css("visibility", "unset");
+                    $("button").css("pointer-events", "all");
+                },
+                error : function(XMLHttpRequest, textStatus, errorThrown){ // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
+                    alert("통신 실패.");
+                    $("button").css("pointer-events", "all");
+                }
+            });
+        } else {
+            alert("이미 서버가 실행중입니다.");
+        }
+
     });
 
     // 서버 실행상태 확인
@@ -160,9 +176,11 @@ h1 {
             success : function(res){
                 // 응답코드 > 0000
                 if(res == 1) {
+                    status = 1;
                     $(".running-icon").css("background", "linear-gradient(125deg, green, lightgreen)");
                     $("#status").text("실행중");
                 } else {
+                    status = 0;
                     $(".running-icon").css("background", "linear-gradient(125deg, red, #ffb9b9)");
                     $("#status").text("미실행중");
                 }
