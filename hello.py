@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 import os
+import psutil
 app = Flask(__name__)
 
 
@@ -17,6 +18,13 @@ def execute():
 def startapp():
     os.system(r'E:/shutdownapp/startapp.bat')
     return "OK"
+
+@app.route("/checkRunning")
+def checkRunning():
+    for process in psutil.process_iter():
+        if (process.name() == 'java.exe'):
+            return "1"
+    return "0"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')

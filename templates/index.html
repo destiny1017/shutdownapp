@@ -7,29 +7,43 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gothic+A1&family=Jua&display=swap" rel="stylesheet">
 <style>
 
 /* 모바일 환경에서만 적용할 css */
-@media screen and (min-width: 500px) {
+@media screen and (max-width: 1024px) {
+    h1 {
+        font-size: 50px;
+    }
 
+    .running-text {
+        font-size: 22px !important;
+    }
+
+    button#start {
+        font-size: 35px !important;
+    }
+
+    button#batch {
+        font-size: 35px !important;
+    }
 }
 
 body {
-    font-family: 'Jua', sans-serif;
+    font-family: 'Gothic A1', sans-serif;
 }
 button#batch {
     width: 300px;
     height: 200px;
-    border: 1px solid #1451ff;
-    background: linear-gradient(to bottom, lightblue, #f5f8ff, lightblue);
+    border: 1px solid #ff2929;
+    background: linear-gradient(to bottom, #ff7575, #fff4f4, #ff7575);
     box-shadow: 3px 2px 3px 3px #ddd;
     font-size: 25px;
     font-family: 'Jua', sans-serif;
 }
 
 button#batch:active {
-    background: linear-gradient(to bottom, #d5edf5, #f5f8ff, #d5edf5);
+    background: linear-gradient(to bottom, #ffa8a8, #fff4f4, #ffb1b1);
 }
 
 button#start {
@@ -53,9 +67,10 @@ button#start:active {
     justify-content: center;
     align-items: center;
     height: 500px;
+    margin-top: 10%;
 }
 
-span {
+.startMsg, .exitMsg {
     margin-top: 10px;
     color: #ff4242;
     visibility: hidden;
@@ -64,10 +79,30 @@ span {
 .btnDiv {
   display: flex;
 }
+
+h1 {
+  margin-bottom: 40px;
+}
+
+.running-icon {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 5px 0 5px;
+}
+
+.running-text {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+}
 </style>
 
 <body>
 <div class="mainDiv">
+    <h1>야생방 서버 실행기</h1>
+    <p class="running-text">현재 서버 상태 : <span class="running-icon"></span><span id="status">확인중</span></p>
     <div class="btnDiv">
         <button id="start">서버 실행</button>
         <button id="batch">서버 종료</button>
@@ -116,6 +151,30 @@ span {
             }
         });
     });
+
+    // 서버 실행상태 확인
+    function checkRunnuing() {
+        $.ajax({
+            type : "GET",
+            url : "/checkRunning",
+            success : function(res){
+                // 응답코드 > 0000
+                if(res == 1) {
+                    $(".running-icon").css("background", "linear-gradient(125deg, green, lightgreen)");
+                    $("#status").text("실행중");
+                } else {
+                    $(".running-icon").css("background", "linear-gradient(125deg, red, #ffb9b9)");
+                    $("#status").text("미실행중");
+                }
+            },
+            error : function(XMLHttpRequest, textStatus, errorThrown){
+                alert("서버 실행상태 확인 실패.");
+            }
+        });
+    }
+
+    checkRunnuing();
+
 
 </script>
 </html>
