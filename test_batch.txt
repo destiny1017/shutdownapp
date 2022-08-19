@@ -1,0 +1,4 @@
+@echo off
+
+start /d E:\shutdownapp\test.bat
+

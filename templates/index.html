@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+
+/* 모바일 환경에서만 적용할 css */
+@media screen and (min-width: 500px) {
+
+}
+
+body {
+    font-family: 'Jua', sans-serif;
+}
+button#batch {
+    width: 300px;
+    height: 200px;
+    border: 1px solid #1451ff;
+    background: linear-gradient(to bottom, lightblue, #f5f8ff, lightblue);
+    box-shadow: 3px 2px 3px 3px #ddd;
+    font-size: 25px;
+    font-family: 'Jua', sans-serif;
+}
+
+button#batch:active {
+    background: linear-gradient(to bottom, #d5edf5, #f5f8ff, #d5edf5);
+}
+
+button#start {
+    width: 300px;
+    height: 200px;
+    border: 1px solid #1451ff;
+    background: linear-gradient(to bottom, lightblue, #f5f8ff, lightblue);
+    box-shadow: 3px 2px 3px 3px #ddd;
+    font-size: 25px;
+    font-family: 'Jua', sans-serif;
+    margin-right: 20px;
+}
+
+button#start:active {
+    background: linear-gradient(to bottom, #d5edf5, #f5f8ff, #d5edf5);
+}
+
+.mainDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 500px;
+}
+
+span {
+    margin-top: 10px;
+    color: #ff4242;
+    visibility: hidden;
+}
+
+.btnDiv {
+  display: flex;
+}
+</style>
+
+<body>
+<div class="mainDiv">
+    <div class="btnDiv">
+        <button id="start">서버 실행</button>
+        <button id="batch">서버 종료</button>
+    </div>
+    <span class="startMsg">실행요청 성공! 약 1분 이내에 서버가 실행됩니다.</span>
+    <span class="exitMsg">종료요청 성공! 약 1분 이내에 서버가 종료됩니다.</span>
+    <span class="exitMsg">서버가 종료된 뒤에는 tapo앱에서 스마트플러그를 꺼주세요.</span>
+</div>
+</body>
+<script>
+
+    $("#batch").click( () => {
+        $("#startMsg").css("visibility", "hidden");
+        $("button").css("pointer-events", "none");
+        // ajax 통신
+        $.ajax({
+            type : "GET",            // HTTP method type(GET, POST) 형식이다.
+            url : "/batch",      // 컨트롤러에서 대기중인 URL 주소이다.
+            success : function(res){ // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
+                // 응답코드 > 0000
+                $(".exitMsg").css("visibility", "unset");
+                $("button").css("pointer-events", "all");
+            },
+            error : function(XMLHttpRequest, textStatus, errorThrown){ // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
+                alert("통신 실패.");
+                $("button").css("pointer-events", "all");
+            }
+        });
+    });
+
+    $("#start").click( () => {
+        $("#exitMsg").css("visibility", "hidden");
+        $("button").css("pointer-events", "none");
+        // ajax 통신
+        $.ajax({
+            type : "GET",            // HTTP method type(GET, POST) 형식이다.
+            url : "/startapp",      // 컨트롤러에서 대기중인 URL 주소이다.
+            success : function(res){ // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
+                // 응답코드 > 0000
+                $(".startMsg").css("visibility", "unset");
+                $("button").css("pointer-events", "all");
+            },
+            error : function(XMLHttpRequest, textStatus, errorThrown){ // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
+                alert("통신 실패.");
+                $("button").css("pointer-events", "all");
+            }
+        });
+    });
+
+</script>
+</html>
